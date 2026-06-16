@@ -1,0 +1,8 @@
+APP_URL=ISI_URL_DEPLOYMENT_ANDA_DI_SINI
+MAP_SERVICE_API_KEY=<api_key>
+
+In this project, Leaflet is loaded via the unpkg CDN to display the map. The Subresource Integrity (SRI) attribute on the Leaflet CSS and JS files is not used because there is a hash discrepancy with the CDN resources, causing the browser to block the Leaflet files and preventing the map from displaying.
+
+To ensure the map displays properly on the viewer page, Leaflet is loaded without the integrity and crossorigin attributes.
+
+Translated with DeepL.com (free version)

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Story Map App untuk berbagi cerita dan lokasi menggunakan Dicoding Story API."
+    />
+
+    <link rel="shortcut icon" href="./favicon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <meta name="theme-color" content="#c45a2c" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Story Map" />
+    <link rel="apple-touch-icon" href="./icons/icon-192x192.png" />
+
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <title>Story Map App</title>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script type="module" src="/scripts/index.js"></script>
+  </head>
+
+  <body>
+    <header class="site-header">
+      <a class="skip-link" href="#main-content">Lewati ke konten utama</a>
+
+      <nav class="main-header container" aria-label="Navigasi utama">
+        <a class="brand-name" href="#/" aria-label="Story Map App beranda">
+          <img src="./images/logo.png" alt="" width="36" height="36" />
+          <span>Story Map</span>
+        </a>
+
+        <div id="navigation-drawer" class="navigation-drawer">
+          <ul id="nav-list" class="nav-list"></ul>
+        </div>
+
+        <button
+          id="drawer-button"
+          class="drawer-button"
+          type="button"
+          aria-label="Buka menu navigasi"
+          aria-controls="navigation-drawer"
+          aria-expanded="false"
+        >
+          ☰
+        </button>
+      </nav>
+    </header>
+
+    <main id="main-content" class="main-content" tabindex="-1"></main>
+
+    <footer class="site-footer">
+      <div class="container footer-content">
+        <p>
+          &copy; 2026 Story Map App. Dibuat untuk berbagi cerita dan lokasi.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
