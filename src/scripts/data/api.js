@@ -1,5 +1,5 @@
-import CONFIG from '../config';
-import Session from './session';
+import CONFIG from "../config";
+import Session from "./session";
 
 const ENDPOINTS = {
   REGISTER: `${CONFIG.BASE_URL}/register`,
@@ -13,7 +13,9 @@ async function parseJsonResponse(response) {
   const responseJson = await response.json();
 
   if (!response.ok || responseJson.error) {
-    throw new Error(responseJson.message || 'Request gagal. Silakan coba lagi.');
+    throw new Error(
+      responseJson.message || "Request gagal. Silakan coba lagi.",
+    );
   }
 
   return responseJson;
@@ -27,9 +29,9 @@ function getAuthHeaders() {
 const StoryApi = {
   async register({ name, email, password }) {
     const response = await fetch(ENDPOINTS.REGISTER, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ name, email, password }),
     });
@@ -39,9 +41,9 @@ const StoryApi = {
 
   async login({ email, password }) {
     const response = await fetch(ENDPOINTS.LOGIN, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ email, password }),
     });
@@ -51,9 +53,9 @@ const StoryApi = {
 
   async getStories({ page = 1, size = 20, location = 1 } = {}) {
     const url = new URL(ENDPOINTS.STORIES);
-    url.searchParams.set('page', page);
-    url.searchParams.set('size', size);
-    url.searchParams.set('location', location);
+    url.searchParams.set("page", page);
+    url.searchParams.set("size", size);
+    url.searchParams.set("location", location);
 
     const response = await fetch(url, {
       headers: getAuthHeaders(),
@@ -72,16 +74,16 @@ const StoryApi = {
 
   async addStory({ description, photo, lat, lon }) {
     const formData = new FormData();
-    formData.append('description', description);
-    formData.append('photo', photo);
+    formData.append("description", description);
+    formData.append("photo", photo);
 
     if (lat !== null && lon !== null) {
-      formData.append('lat', lat);
-      formData.append('lon', lon);
+      formData.append("lat", lat);
+      formData.append("lon", lon);
     }
 
     const response = await fetch(ENDPOINTS.STORIES, {
-      method: 'POST',
+      method: "POST",
       headers: getAuthHeaders(),
       body: formData,
     });
@@ -90,13 +92,24 @@ const StoryApi = {
   },
 
   async subscribeNotification(subscription) {
+    const subscriptionJson =
+      typeof subscription.toJSON === "function"
+        ? subscription.toJSON()
+        : subscription;
+
     const response = await fetch(ENDPOINTS.SUBSCRIBE_NOTIFICATION, {
-      method: 'POST',
+      method: "POST",
       headers: {
         ...getAuthHeaders(),
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(subscription),
+      body: JSON.stringify({
+        endpoint: subscriptionJson.endpoint,
+        keys: {
+          auth: subscriptionJson.keys.auth,
+          p256dh: subscriptionJson.keys.p256dh,
+        },
+      }),
     });
 
     return parseJsonResponse(response);
@@ -104,10 +117,10 @@ const StoryApi = {
 
   async unsubscribeNotification({ endpoint }) {
     const response = await fetch(ENDPOINTS.SUBSCRIBE_NOTIFICATION, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
         ...getAuthHeaders(),
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ endpoint }),
     });
