@@ -1,16 +1,21 @@
-import StoryDb from '../../data/story-db';
-import Session from '../../data/session';
-import { createErrorTemplate, createLoadingTemplate, escapeHtml, showFormattedDate } from '../../utils';
+import StoryDb from "../../data/story-db";
+import Session from "../../data/session";
+import {
+  createErrorTemplate,
+  createLoadingTemplate,
+  escapeHtml,
+  showFormattedDate,
+} from "../../utils";
 
 export default class SavedPage {
   #stories = [];
-  #query = '';
-  #sortBy = 'newest';
+  #query = "";
+  #sortBy = "newest";
 
   async render() {
     if (!Session.isAuthenticated()) {
-      location.hash = '#/login';
-      return '';
+      location.hash = "#/login";
+      return "";
     }
 
     return `
@@ -36,24 +41,31 @@ export default class SavedPage {
           </div>
         </div>
 
-        <p id="saved-count" class="muted-text" aria-live="polite"></p>
-        <div id="saved-list" class="story-list saved-list" aria-live="polite">
-          ${createLoadingTemplate('Memuat data dari IndexedDB...')}
-        </div>
+        <section class="saved-list-section" aria-labelledby="saved-list-title">
+          <h2 id="saved-list-title" class="saved-list-title">Daftar story tersimpan</h2>
+          <p id="saved-count" class="muted-text" aria-live="polite"></p>
+          <div id="saved-list" class="story-list saved-list" aria-live="polite">
+          ${createLoadingTemplate("Memuat data dari IndexedDB...")}
+          </div>
+        </section>
       </section>
     `;
   }
 
   async afterRender() {
-    document.querySelector('#saved-search').addEventListener('input', (event) => {
-      this.#query = event.target.value.trim().toLowerCase();
-      this.#renderList();
-    });
+    document
+      .querySelector("#saved-search")
+      .addEventListener("input", (event) => {
+        this.#query = event.target.value.trim().toLowerCase();
+        this.#renderList();
+      });
 
-    document.querySelector('#saved-sort').addEventListener('change', (event) => {
-      this.#sortBy = event.target.value;
-      this.#renderList();
-    });
+    document
+      .querySelector("#saved-sort")
+      .addEventListener("change", (event) => {
+        this.#sortBy = event.target.value;
+        this.#renderList();
+      });
 
     await this.#loadStories();
   }
@@ -63,7 +75,9 @@ export default class SavedPage {
       this.#stories = await StoryDb.getSavedStories();
       this.#renderList();
     } catch (error) {
-      document.querySelector('#saved-list').innerHTML = createErrorTemplate(error.message);
+      document.querySelector("#saved-list").innerHTML = createErrorTemplate(
+        error.message,
+      );
     }
   }
 
@@ -71,15 +85,17 @@ export default class SavedPage {
     return this.#stories
       .filter((story) => {
         if (!this.#query) return true;
-        return `${story.name} ${story.description}`.toLowerCase().includes(this.#query);
+        return `${story.name} ${story.description}`
+          .toLowerCase()
+          .includes(this.#query);
       })
       .sort((a, b) => {
-        if (this.#sortBy === 'oldest') {
+        if (this.#sortBy === "oldest") {
           return new Date(a.createdAt) - new Date(b.createdAt);
         }
 
-        if (this.#sortBy === 'name') {
-          return a.name.localeCompare(b.name, 'id-ID');
+        if (this.#sortBy === "name") {
+          return a.name.localeCompare(b.name, "id-ID");
         }
 
         return new Date(b.createdAt) - new Date(a.createdAt);
@@ -87,23 +103,29 @@ export default class SavedPage {
   }
 
   #renderList() {
-    const listElement = document.querySelector('#saved-list');
-    const countElement = document.querySelector('#saved-count');
+    const listElement = document.querySelector("#saved-list");
+    const countElement = document.querySelector("#saved-count");
     const stories = this.#getFilteredStories();
 
     countElement.textContent = `${stories.length} story ditampilkan dari ${this.#stories.length} data lokal.`;
 
     if (!this.#stories.length) {
-      listElement.innerHTML = createErrorTemplate('Belum ada story yang disimpan ke IndexedDB. Simpan story dari halaman beranda atau detail.');
+      listElement.innerHTML = createErrorTemplate(
+        "Belum ada story yang disimpan ke IndexedDB. Simpan story dari halaman beranda atau detail.",
+      );
       return;
     }
 
     if (!stories.length) {
-      listElement.innerHTML = createErrorTemplate('Tidak ada story yang cocok dengan pencarian.');
+      listElement.innerHTML = createErrorTemplate(
+        "Tidak ada story yang cocok dengan pencarian.",
+      );
       return;
     }
 
-    listElement.innerHTML = stories.map((story) => this.#storyTemplate(story)).join('');
+    listElement.innerHTML = stories
+      .map((story) => this.#storyTemplate(story))
+      .join("");
     this.#setupDeleteButtons();
   }
 
@@ -128,10 +150,12 @@ export default class SavedPage {
   }
 
   #setupDeleteButtons() {
-    document.querySelectorAll('.delete-saved-button').forEach((button) => {
-      button.addEventListener('click', async () => {
+    document.querySelectorAll(".delete-saved-button").forEach((button) => {
+      button.addEventListener("click", async () => {
         await StoryDb.deleteStory(button.dataset.storyId);
-        this.#stories = this.#stories.filter((story) => story.id !== button.dataset.storyId);
+        this.#stories = this.#stories.filter(
+          (story) => story.id !== button.dataset.storyId,
+        );
         this.#renderList();
       });
     });
